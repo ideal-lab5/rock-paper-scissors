@@ -1,0 +1,16 @@
+.App {
+  text-align: center;
+}
+
+.Header {
+  display: grid;
+}
+
+
+.rps-container {
+  display: inline-flex;
+}
+
+.rps-container > div {
+  padding: 10px;
+}
