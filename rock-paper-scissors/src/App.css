@@ -1,5 +1,11 @@
 .App {
   text-align: center;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.Title {
+  font-size: 30px;
+  padding: 10px;
 }
 
 .Header {
@@ -12,5 +18,26 @@
 }
 
 .rps-container > div {
+  padding: 40px;
+  font-size: 40px;
+}
+
+.rps-container > div:hover {
+  color: blue;
+}
+
+.game-details {
+  /* margin: 5 auto; */
+  margin: 50px;
+  float: left;
+  display: grid;
+  position: absolute;
+}
+
+.rewards-container {
+  float: right;
+  margin: 100px;
+  display: grid;
   padding: 10px;
+  border: red dotted 2px;
 }

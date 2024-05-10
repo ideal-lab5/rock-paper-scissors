@@ -137,8 +137,8 @@ mod rps {
             // need to be careful later.. if the gateway misses an expected next_block_number
             // then we could run into trouble, so we need a fallback mechanism....
             // I'm already running into this with problem
-            if let Some(hex) = gateway_contract.read_block(self.next_block_number) {
-                let result: u8 = hex.iter().sum::<u8>() % 3;
+            if let Some(rand_bytes) = gateway_contract.read_block(self.next_block_number) {
+                let result: u8 = rand_bytes.iter().sum::<u8>() % 3;
                 self.round_result.insert(self.current_round_number, &result);
                 let winners = self.guesses.get(result).unwrap_or_default();
                 self.winners.insert(self.current_round_number, &winners);

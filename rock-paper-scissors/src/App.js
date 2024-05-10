@@ -7,6 +7,11 @@ import { ContractPromise } from '@polkadot/api-contract';
 import RPSContractService from './rps.service';
 import metadata from './resources/rps.json';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHandRock, faHandScissors, faHandPaper } from '@fortawesome/free-regular-svg-icons';
+import WalletConnect from './wallet-connect';
+// import { byPrefixAndName } from '@awesome.me/kit-KIT_CODE/icons'
+
 function App() {
 
   /* "Header" vars */
@@ -21,7 +26,7 @@ function App() {
 
   /* Polkadotjs info */
   const [currentBlockNumber, setCurrentBlockNumber] = useState(0);
-  const [contractAddress, setContractAddress] = useState('5H6qzrDpXwHSocudgsTpV5UxanvNpgtb5xivnBsJ5DEpL9Sb');
+  const [contractAddress, setContractAddress] = useState('5CAgjP96P7cyAiNw3Ntvb3CbBhEFTxZ8LFceKCTnoEyagtJk');
 
   const [suri, setSuri] = useState('Alice');
   const [signer, setSigner] = useState(null);
@@ -30,7 +35,8 @@ function App() {
   const [rpsContract, setRpsContract] = useState(null);
 
 
-
+  //. unrelated ... but about to power off my pc and want to keep this link for tomorrow
+  // https://www.reddit.com/media?url=https%3A%2F%2Fpreview.redd.it%2Fi-love-the-tile-controlnet-but-its-really-easy-to-overdo-v0-bw7v0vhpbm8b1.png%3Fwidth%3D5440%26format%3Dpng%26auto%3Dwebp%26s%3D0f12e5a3d98f077e4a3406bc0fc5124ec2c89220
   useEffect(() => {
     let player_id = 13;
 
@@ -157,15 +163,23 @@ function App() {
     setMaybeChoice(null);
   }
 
+  function handlePayout() {
+
+  }
+
   return (
     <div className="App">
-      <div>
+      <div className='Title'>
         Rock Paper Scissors
       </div>
-      <div className='Header'>
-        <span>
-          Welcome { signer ? signer.address : '' }
-        </span>
+        <div>
+          <input type="text" onChange={(e) => setSuri(e.target.value)} value={ suri }/>
+          <button onClick={handleAccountReload}>Update</button>
+        </div>
+      <div>
+        {/* { api != null ? <WalletConnect api={api} setSigner={handleAccountReload} /> : <div></div> } */}
+      </div>
+      <div className='game-details'>
         <span>
           Current round # { roundNumber }
         </span>
@@ -175,18 +189,11 @@ function App() {
         <span>
           Current block number { currentBlockNumber }
         </span>
-        <div>
-          <input type="text" onChange={(e) => setSuri(e.target.value)} value={ suri }/>
-          <button onClick={handleAccountReload}>Update</button>
-        </div>
-      </div>
-      <div className='rewards-container'>
-        <button>withdraw { availableRewardBalance }</button>
       </div>
       <div className="game-container">
         <div className="rps-container">
           <div onClick={() => setMaybeChoice(0)}>
-            Rock
+            <FontAwesomeIcon icon={faHandRock}/>
             <div>
               { guesses.length > 0 ? 
               <div>
@@ -195,7 +202,7 @@ function App() {
             </div>
           </div>
           <div onClick={() => setMaybeChoice(1)}>
-            Paper
+            <FontAwesomeIcon icon={faHandPaper} />
             <div>
             { guesses.length > 0 ? 
               <div>
@@ -204,7 +211,7 @@ function App() {
             </div>
           </div>
           <div onClick={() => setMaybeChoice(2)}>
-            Scissors
+              <FontAwesomeIcon icon={faHandScissors}/>
             <div>
             { guesses.length > 0 ? 
               <div>
@@ -237,6 +244,12 @@ function App() {
                 }
               </div> }
            </div> }
+           <div className='rewards-container'>
+            <span>
+              Current account: { signer ? signer.address : '' }
+            </span>
+            <button onClick={handlePayout}>withdraw { availableRewardBalance }</button>
+          </div>
         </div>
       </div>
     </div>
