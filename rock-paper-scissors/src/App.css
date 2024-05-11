@@ -1,43 +1,148 @@
+/* Reset and basic styling */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #121212; /* Dark background */
+  font-family: 'Arial', sans-serif;
+  color: #fff; /* White text */
+}
+
 .App {
+  display: grid;
+  place-items: center;
+  height: 100vh; /* Center everything vertically */
   text-align: center;
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
 .Title {
-  font-size: 30px;
-  padding: 10px;
+  font-size: 36px;
+  font-weight: bold;
+  padding: 20px 0;
+  color: #fff; /* White text */
 }
 
+/* RTS-style header */
 .Header {
   display: grid;
+  place-items: center;
+  grid-template-columns: auto 1fr auto;
+  background-color: #1e1e1e; /* Darker background */
+  border-bottom: 2px solid #00bfff; /* Light blue border */
+  width: 100%;
+  padding: 10px 20px;
 }
 
+.connect {
+  display: grid;
+}
 
+/* Container for game elements */
+.game-container {
+  display: grid;
+  place-items: center;
+  margin-top: 40px;
+}
+
+/* RTS-style rock-paper-scissors container */
 .rps-container {
-  display: inline-flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
 }
 
-.rps-container > div {
-  padding: 40px;
+.icon-container {
+  cursor: pointer;
+  padding: 20px;
   font-size: 40px;
-}
-
-.rps-container > div:hover {
-  color: blue;
-}
-
-.game-details {
-  /* margin: 5 auto; */
-  margin: 50px;
-  float: left;
+  color: #fff; /* White text */
+  transition: color 0.3s ease;
   display: grid;
-  position: absolute;
+  place-items: center;
+  border: 2px solid #00bfff; /* Light blue border */
+  border-radius: 8px;
 }
 
+.icon-container:hover {
+  color: #00bfff; /* Light blue text on hover */
+}
+
+/* RTS-style rewards container */
 .rewards-container {
-  float: right;
-  margin: 100px;
+  padding: 20px;
+  background-color: #1e1e1e; /* Darker background */
+  border: 2px solid #00bfff; /* Light blue border */
+  border-radius: 8px;
+}
+
+.wallet-amount {
+  color: #fff; /* White text */
   display: grid;
-  padding: 10px;
-  border: red dotted 2px;
+}
+
+/* RTS-style footer */
+.footer {
+  margin-top: 40px;
+  font-size: 14px;
+  color: #fff; /* White text */
+}
+
+.footer a {
+  color: #fff; /* White links */
+  text-decoration: none;
+  margin: 0 5px;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+/* Button styling */
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #00bfff; /* Light blue background */
+  color: #fff; /* White text */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 40px;
+}
+
+.button:hover {
+  background-color: #0080ff; /* Darker blue background on hover */
+}
+
+/* Game details styling */
+.game-details {
+  position: absolute;
+  left: 10%;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #333; /* Darker gray background */
+  padding: 20px;
+  border: 2px solid #05c0ff; /* Light blue border */
+  border-radius: 8px;
+  color: #fff; /* White text */
+  display: grid;
+}
+
+.round-over {
+  font-size: 20px;
+  margin: 10px;
+  color: red;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.selection {
+  padding-top: 30px;
+  font-size: 20px;
+}
+
+.num-guesses {
+  padding: 15px;
+  font-size: 20px;
 }

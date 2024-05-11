@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0xba97e3ce52103a87f25d42c13f062cb58a8c994857ac1dad8e2404e349aadc0d",
+    "hash": "0xe4584cf285e778dcf5b6d80910648ddd2383a9e5811ae7fadd66906e38880cb1",
     "language": "ink! 5.0.0",
     "compiler": "rustc 1.77.2",
     "build_info": {
@@ -53,7 +53,7 @@
             "ink_primitives",
             "ConstructorResult"
           ],
-          "type": 24
+          "type": 23
         },
         "selector": "0x9bae9d5e"
       },
@@ -70,7 +70,7 @@
             "ink_primitives",
             "ConstructorResult"
           ],
-          "type": 24
+          "type": 23
         },
         "selector": "0xed4b9d1b"
       }
@@ -87,7 +87,7 @@
         "displayName": [
           "Balance"
         ],
-        "type": 13
+        "type": 35
       },
       "blockNumber": {
         "displayName": [
@@ -122,7 +122,7 @@
         "ink",
         "LangError"
       ],
-      "type": 25
+      "type": 24
     },
     "messages": [
       {
@@ -137,7 +137,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 26
+          "type": 25
         },
         "selector": "0x7b2f676e"
       },
@@ -153,7 +153,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 26
+          "type": 25
         },
         "selector": "0x35fa693f"
       },
@@ -179,7 +179,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 27
+          "type": 26
         },
         "selector": "0xc51514c9"
       },
@@ -205,7 +205,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 27
+          "type": 26
         },
         "selector": "0xa8c21dbd"
       },
@@ -213,7 +213,7 @@
         "args": [],
         "default": false,
         "docs": [],
-        "label": "get_pending_reward_balance",
+        "label": "get_points",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -221,9 +221,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 29
+          "type": 28
         },
-        "selector": "0x7b818d02"
+        "selector": "0xb912d315"
       },
       {
         "args": [
@@ -247,7 +247,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 31
+          "type": 30
         },
         "selector": "0x0f5724c5"
       },
@@ -275,7 +275,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 33
+          "type": 32
         },
         "selector": "0x9963949f"
       },
@@ -291,25 +291,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 24
+          "type": 23
         },
         "selector": "0x0740d2e1"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "payout",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 24
-        },
-        "selector": "0xd4805650"
       }
     ]
   },
@@ -354,11 +338,11 @@
                   "layout": {
                     "leaf": {
                       "key": "0x3a25ab2a",
-                      "ty": 13
+                      "ty": 10
                     }
                   },
                   "root_key": "0x3a25ab2a",
-                  "ty": 14
+                  "ty": 13
                 }
               },
               "name": "reward_tracker"
@@ -369,11 +353,11 @@
                   "layout": {
                     "leaf": {
                       "key": "0x2ea587e2",
-                      "ty": 13
+                      "ty": 10
                     }
                   },
                   "root_key": "0x2ea587e2",
-                  "ty": 17
+                  "ty": 16
                 }
               },
               "name": "round_reward"
@@ -388,7 +372,7 @@
                     }
                   },
                   "root_key": "0xb16e5924",
-                  "ty": 20
+                  "ty": 19
                 }
               },
               "name": "round_result"
@@ -425,7 +409,7 @@
         }
       },
       "root_key": "0x00000000",
-      "ty": 23
+      "ty": 22
     }
   },
   "types": [
@@ -651,8 +635,28 @@
       "id": 13,
       "type": {
         "def": {
-          "primitive": "u128"
-        }
+          "composite": {}
+        },
+        "params": [
+          {
+            "name": "K",
+            "type": 1
+          },
+          {
+            "name": "V",
+            "type": 10
+          },
+          {
+            "name": "KeyType",
+            "type": 14
+          }
+        ],
+        "path": [
+          "ink_storage",
+          "lazy",
+          "mapping",
+          "Mapping"
+        ]
       }
     },
     {
@@ -663,23 +667,18 @@
         },
         "params": [
           {
-            "name": "K",
-            "type": 1
+            "name": "L",
+            "type": 6
           },
           {
-            "name": "V",
-            "type": 13
-          },
-          {
-            "name": "KeyType",
+            "name": "R",
             "type": 15
           }
         ],
         "path": [
-          "ink_storage",
-          "lazy",
-          "mapping",
-          "Mapping"
+          "ink_storage_traits",
+          "impls",
+          "ResolverKey"
         ]
       }
     },
@@ -691,18 +690,14 @@
         },
         "params": [
           {
-            "name": "L",
-            "type": 6
-          },
-          {
-            "name": "R",
-            "type": 16
+            "name": "ParentKey",
+            "type": 8
           }
         ],
         "path": [
           "ink_storage_traits",
           "impls",
-          "ResolverKey"
+          "ManualKey"
         ]
       }
     },
@@ -714,35 +709,16 @@
         },
         "params": [
           {
-            "name": "ParentKey",
-            "type": 8
-          }
-        ],
-        "path": [
-          "ink_storage_traits",
-          "impls",
-          "ManualKey"
-        ]
-      }
-    },
-    {
-      "id": 17,
-      "type": {
-        "def": {
-          "composite": {}
-        },
-        "params": [
-          {
             "name": "K",
             "type": 10
           },
           {
             "name": "V",
-            "type": 13
+            "type": 10
           },
           {
             "name": "KeyType",
-            "type": 18
+            "type": 17
           }
         ],
         "path": [
@@ -754,7 +730,7 @@
       }
     },
     {
-      "id": 18,
+      "id": 17,
       "type": {
         "def": {
           "composite": {}
@@ -766,7 +742,7 @@
           },
           {
             "name": "R",
-            "type": 19
+            "type": 18
           }
         ],
         "path": [
@@ -777,7 +753,7 @@
       }
     },
     {
-      "id": 19,
+      "id": 18,
       "type": {
         "def": {
           "composite": {}
@@ -796,7 +772,7 @@
       }
     },
     {
-      "id": 20,
+      "id": 19,
       "type": {
         "def": {
           "composite": {}
@@ -812,7 +788,7 @@
           },
           {
             "name": "KeyType",
-            "type": 21
+            "type": 20
           }
         ],
         "path": [
@@ -824,7 +800,7 @@
       }
     },
     {
-      "id": 21,
+      "id": 20,
       "type": {
         "def": {
           "composite": {}
@@ -836,7 +812,7 @@
           },
           {
             "name": "R",
-            "type": 22
+            "type": 21
           }
         ],
         "path": [
@@ -847,7 +823,7 @@
       }
     },
     {
-      "id": 22,
+      "id": 21,
       "type": {
         "def": {
           "composite": {}
@@ -866,7 +842,7 @@
       }
     },
     {
-      "id": 23,
+      "id": 22,
       "type": {
         "def": {
           "composite": {
@@ -883,17 +859,17 @@
               },
               {
                 "name": "reward_tracker",
-                "type": 14,
-                "typeName": "<Mapping<AccountId, Balance> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<715859258u32, ()\n>,>>::Type"
+                "type": 13,
+                "typeName": "<Mapping<AccountId, Point> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<715859258u32, ()\n>,>>::Type"
               },
               {
                 "name": "round_reward",
-                "type": 17,
-                "typeName": "<Mapping<RoundNumber, Balance> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<3800540462u32,\n()>,>>::Type"
+                "type": 16,
+                "typeName": "<Mapping<RoundNumber, Point> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<3800540462u32,\n()>,>>::Type"
               },
               {
                 "name": "round_result",
-                "type": 20,
+                "type": 19,
                 "typeName": "<Mapping<RoundNumber, u8> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<609840817u32, ()\n>,>>::Type"
               },
               {
@@ -922,7 +898,7 @@
       }
     },
     {
-      "id": 24,
+      "id": 23,
       "type": {
         "def": {
           "variant": {
@@ -939,7 +915,7 @@
               {
                 "fields": [
                   {
-                    "type": 25
+                    "type": 24
                   }
                 ],
                 "index": 1,
@@ -955,7 +931,7 @@
           },
           {
             "name": "E",
-            "type": 25
+            "type": 24
           }
         ],
         "path": [
@@ -964,7 +940,7 @@
       }
     },
     {
-      "id": 25,
+      "id": 24,
       "type": {
         "def": {
           "variant": {
@@ -983,7 +959,7 @@
       }
     },
     {
-      "id": 26,
+      "id": 25,
       "type": {
         "def": {
           "variant": {
@@ -1000,7 +976,7 @@
               {
                 "fields": [
                   {
-                    "type": 25
+                    "type": 24
                   }
                 ],
                 "index": 1,
@@ -1016,7 +992,7 @@
           },
           {
             "name": "E",
-            "type": 25
+            "type": 24
           }
         ],
         "path": [
@@ -1025,7 +1001,7 @@
       }
     },
     {
-      "id": 27,
+      "id": 26,
       "type": {
         "def": {
           "variant": {
@@ -1033,7 +1009,7 @@
               {
                 "fields": [
                   {
-                    "type": 28
+                    "type": 27
                   }
                 ],
                 "index": 0,
@@ -1042,7 +1018,7 @@
               {
                 "fields": [
                   {
-                    "type": 25
+                    "type": 24
                   }
                 ],
                 "index": 1,
@@ -1054,11 +1030,11 @@
         "params": [
           {
             "name": "T",
-            "type": 28
+            "type": 27
           },
           {
             "name": "E",
-            "type": 25
+            "type": 24
           }
         ],
         "path": [
@@ -1067,7 +1043,7 @@
       }
     },
     {
-      "id": 28,
+      "id": 27,
       "type": {
         "def": {
           "variant": {
@@ -1100,7 +1076,7 @@
       }
     },
     {
-      "id": 29,
+      "id": 28,
       "type": {
         "def": {
           "variant": {
@@ -1108,7 +1084,7 @@
               {
                 "fields": [
                   {
-                    "type": 30
+                    "type": 29
                   }
                 ],
                 "index": 0,
@@ -1117,7 +1093,7 @@
               {
                 "fields": [
                   {
-                    "type": 25
+                    "type": 24
                   }
                 ],
                 "index": 1,
@@ -1129,11 +1105,11 @@
         "params": [
           {
             "name": "T",
-            "type": 30
+            "type": 29
           },
           {
             "name": "E",
-            "type": 25
+            "type": 24
           }
         ],
         "path": [
@@ -1142,7 +1118,7 @@
       }
     },
     {
-      "id": 30,
+      "id": 29,
       "type": {
         "def": {
           "variant": {
@@ -1154,7 +1130,7 @@
               {
                 "fields": [
                   {
-                    "type": 13
+                    "type": 10
                   }
                 ],
                 "index": 1,
@@ -1166,7 +1142,7 @@
         "params": [
           {
             "name": "T",
-            "type": 13
+            "type": 10
           }
         ],
         "path": [
@@ -1175,7 +1151,7 @@
       }
     },
     {
-      "id": 31,
+      "id": 30,
       "type": {
         "def": {
           "variant": {
@@ -1183,7 +1159,7 @@
               {
                 "fields": [
                   {
-                    "type": 32
+                    "type": 31
                   }
                 ],
                 "index": 0,
@@ -1192,7 +1168,7 @@
               {
                 "fields": [
                   {
-                    "type": 25
+                    "type": 24
                   }
                 ],
                 "index": 1,
@@ -1204,11 +1180,11 @@
         "params": [
           {
             "name": "T",
-            "type": 32
+            "type": 31
           },
           {
             "name": "E",
-            "type": 25
+            "type": 24
           }
         ],
         "path": [
@@ -1217,7 +1193,7 @@
       }
     },
     {
-      "id": 32,
+      "id": 31,
       "type": {
         "def": {
           "variant": {
@@ -1250,7 +1226,7 @@
       }
     },
     {
-      "id": 33,
+      "id": 32,
       "type": {
         "def": {
           "variant": {
@@ -1258,7 +1234,7 @@
               {
                 "fields": [
                   {
-                    "type": 34
+                    "type": 33
                   }
                 ],
                 "index": 0,
@@ -1267,7 +1243,7 @@
               {
                 "fields": [
                   {
-                    "type": 25
+                    "type": 24
                   }
                 ],
                 "index": 1,
@@ -1279,11 +1255,11 @@
         "params": [
           {
             "name": "T",
-            "type": 34
+            "type": 33
           },
           {
             "name": "E",
-            "type": 25
+            "type": 24
           }
         ],
         "path": [
@@ -1292,7 +1268,7 @@
       }
     },
     {
-      "id": 34,
+      "id": 33,
       "type": {
         "def": {
           "variant": {
@@ -1309,7 +1285,7 @@
               {
                 "fields": [
                   {
-                    "type": 35
+                    "type": 34
                   }
                 ],
                 "index": 1,
@@ -1325,7 +1301,7 @@
           },
           {
             "name": "E",
-            "type": 35
+            "type": 34
           }
         ],
         "path": [
@@ -1334,7 +1310,7 @@
       }
     },
     {
-      "id": 35,
+      "id": 34,
       "type": {
         "def": {
           "variant": {
@@ -1359,6 +1335,14 @@
           "rps",
           "Error"
         ]
+      }
+    },
+    {
+      "id": 35,
+      "type": {
+        "def": {
+          "primitive": "u128"
+        }
       }
     },
     {

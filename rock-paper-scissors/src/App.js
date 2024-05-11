@@ -1,16 +1,16 @@
-import logo from './logo.svg';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import './App.css';
 
 import { ApiPromise, Keyring, WsProvider } from '@polkadot/api'
 import { ContractPromise } from '@polkadot/api-contract';
 import RPSContractService from './rps.service';
+import WalletConnect from './wallet-connect';
 import metadata from './resources/rps.json';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHandRock, faHandScissors, faHandPaper } from '@fortawesome/free-regular-svg-icons';
-import WalletConnect from './wallet-connect';
-// import { byPrefixAndName } from '@awesome.me/kit-KIT_CODE/icons'
+
+import Button from 'react-bootstrap/Button';
 
 function App() {
 
@@ -26,7 +26,7 @@ function App() {
 
   /* Polkadotjs info */
   const [currentBlockNumber, setCurrentBlockNumber] = useState(0);
-  const [contractAddress, setContractAddress] = useState('5CAgjP96P7cyAiNw3Ntvb3CbBhEFTxZ8LFceKCTnoEyagtJk');
+  const [contractAddress, setContractAddress] = useState('5EDhMe4EdoEibByhsSNT554b6R5jGDdR716doRMjVGv1evue');
 
   const [suri, setSuri] = useState('Alice');
   const [signer, setSigner] = useState(null);
@@ -34,14 +34,10 @@ function App() {
   const [api, setApi] = useState(null);
   const [rpsContract, setRpsContract] = useState(null);
 
-
-  //. unrelated ... but about to power off my pc and want to keep this link for tomorrow
-  // https://www.reddit.com/media?url=https%3A%2F%2Fpreview.redd.it%2Fi-love-the-tile-controlnet-but-its-really-easy-to-overdo-v0-bw7v0vhpbm8b1.png%3Fwidth%3D5440%26format%3Dpng%26auto%3Dwebp%26s%3D0f12e5a3d98f077e4a3406bc0fc5124ec2c89220
   useEffect(() => {
-    let player_id = 13;
-
     const setupPolkadot = async () => {
-      let provider = new WsProvider('ws://localhost:9944');
+      // let provider = new WsProvider('ws://localhost:9944');
+      let provider = new WsProvider('wss://etf1.idealabs.network:443');
       let api = await ApiPromise.create({ provider });
       setApi(api);
 
@@ -53,54 +49,39 @@ function App() {
       let rps = new ContractPromise(api, metadata, contractAddress);
       setRpsContract(rps);
 
-      const keyring = new Keyring();
-      const alice = keyring.addFromUri('//Alice', { name: 'Alice' }, 'sr25519');
-      setSigner(alice);
+      // const keyring = new Keyring();
+      // const alice = keyring.addFromUri('//Alice', { name: 'Alice' }, 'sr25519');
+      // setSigner(alice);
 
-      loadRoundDetails(api, alice, rps);
-      loadGuesses(api, alice, rps);
-
-
-
-      // setGuesses(guesses);
-
-      // let chosenGuess = guesses.findIndex(g => g.includes(player_id))
-      // if (chosenGuess > -1) {
-      //   setChoice(chosenGuess);
-      // }
+      // loadRoundDetails(api, alice, rps);
+      // loadGuesses(api, alice, rps);
     };
-
-    // const setup = async (signer, contract) => {
-    //   let roundNumber = await RPSContractService.getCurrentRoundNumber(signer, contract);
-    //   setRoundNumber(roundNumber);
-
-    //   let nextBlockNumber = await RPSContractService.getNextBlockNumber();
-    //   setNextBlockNumber(nextBlockNumber);
-
-    //   let guesses = await RPSContractService.getGuesses();
-    //   setGuesses(guesses);
-
-    //   let chosenGuess = guesses.findIndex(g => g.includes(player_id))
-    //   if (chosenGuess > -1) {
-    //     setChoice(chosenGuess);
-    //   }
-    // };
 
     setupPolkadot();
       // .then(setup());
 
   }, []);
 
+  // async function handleConnect() {
+  //         const keyring = new Keyring();
+  //     const alice = keyring.addFromUri('//Alice', { name: 'Alice' }, 'sr25519');
+  //     setSigner(alice);
+
+  //     loadRoundDetails(api, alice, rps);
+  //     loadGuesses(api, alice, rps);
+  // }
+
   async function handleComplete() {
-    await RPSContractService.complete(api, signer, rpsContract, async () => {
+    await RPSContractService.complete(api, signer.address, rpsContract, async () => {
       loadRoundDetails(api, signer, rpsContract);
+      loadGuesses(api, signer, rpsContract);
       setChoice(null);
       setMaybeChoice(null);
     });
   }
 
   async function handlePlay() {
-    await RPSContractService.play(api, signer, rpsContract, maybeChoice, async () => {
+    await RPSContractService.play(api, signer.address, rpsContract, maybeChoice, async () => {
       await loadGuesses(api, signer, rpsContract);
       setChoice(maybeChoice);
     });
@@ -114,13 +95,14 @@ function App() {
       let result = await RPSContractService.getRoundResult(api, signer.address, rpsContract, i);
       if (result) {
         console.log('result ' + result.Ok);
+        // setRoundResult({roundNumber, result})
       }
     }
 
     let nextBlockNumber = await RPSContractService.getNextBlockNumber(api, signer.address, rpsContract);
     setNextBlockNumber(parseInt(nextBlockNumber.Ok.replace(",", "")));
 
-    let availableRewardBalance = await RPSContractService.getPendingRewardBalance(api, signer.address, rpsContract);
+    let availableRewardBalance = await RPSContractService.getPoints(api, signer.address, rpsContract);
     if (availableRewardBalance.Ok) {
       setAvailableRewardBalance(parseInt(availableRewardBalance.Ok.replace(",", "")));
     } else {
@@ -146,111 +128,141 @@ function App() {
       setChoice(2);
     }
 
-    console.log(guesses_rock);
-    console.log(guesses_paper);
-    console.log(guesses_scissors);
+    setGuesses([guesses_rock, guesses_paper, guesses_scissors])
   }
 
-  function handleAccountReload() {
-    const keyring = new Keyring();
-    let uri = '//' + suri;
-    const signer = keyring.addFromUri(uri, { name: suri }, 'sr25519');
-    setSigner(signer);
+  function mapIndexToItem(i) {
+    switch(i) {
+      case 0:
+          return "rock"
+      case 1:
+          return "paper"
+      case 2:
+          return "scissors" 
+      default:
+          return "spock"
+    };
+  }
 
-    loadRoundDetails(api, signer, rpsContract);
-    loadGuesses(api, signer, rpsContract);
+  const handleAccountReload = useCallback((newSigner) => {
+    // const keyring = new Keyring();
+    // let uri = '//' + suri;
+    // const signer = keyring.addFromUri(uri, { name: suri }, 'sr25519');
+    setSigner(newSigner);
+    loadRoundDetails(api, newSigner, rpsContract);
+    loadGuesses(api, newSigner, rpsContract);
     setChoice(null);
     setMaybeChoice(null);
-  }
-
-  function handlePayout() {
-
-  }
+  });
 
   return (
     <div className="App">
       <div className='Title'>
         Rock Paper Scissors
       </div>
+      {/* <div className='connect-container'> */}
+        { api != null ? <WalletConnect api={api} setSigner={handleAccountReload} /> : 
         <div>
-          <input type="text" onChange={(e) => setSuri(e.target.value)} value={ suri }/>
-          <button onClick={handleAccountReload}>Update</button>
+          <p>
+          Failed to establish a connection with the Ideal network. 
+          </p>
+          <p>
+          Please try again later or contact us on discord.
+          </p>
+        </div> }
+      {/* </div> */}
+      { signer === null ? <div></div> :
+      <div className='body'>
+        <div className='game-details'>
+          <span>
+            Points: { availableRewardBalance }
+          </span>
+          <span>
+            Current round # { roundNumber }
+          </span>
+          <span>
+            Round complete at block { nextBlockNumber }
+          </span>
+          <span>
+            Current block number { currentBlockNumber }
+          </span>
         </div>
-      <div>
-        {/* { api != null ? <WalletConnect api={api} setSigner={handleAccountReload} /> : <div></div> } */}
-      </div>
-      <div className='game-details'>
-        <span>
-          Current round # { roundNumber }
-        </span>
-        <span>
-          Round complete at block { nextBlockNumber }
-        </span>
-        <span>
-          Current block number { currentBlockNumber }
-        </span>
-      </div>
       <div className="game-container">
+        <div>
+         { currentBlockNumber > nextBlockNumber ? 
+          <div className='round-over'><span>ROUND OVER</span></div> : <span></span> } 
+        </div>
         <div className="rps-container">
           <div onClick={() => setMaybeChoice(0)}>
-            <FontAwesomeIcon icon={faHandRock}/>
+            <FontAwesomeIcon className='icon-container' icon={faHandRock}/>
             <div>
-              { guesses.length > 0 ? 
-              <div>
-                {guesses[0].length}
+              { guesses[0] ? 
+              <div className='num-guesses'>
+                ({guesses[0].length})
               </div> : <div></div> }
             </div>
           </div>
           <div onClick={() => setMaybeChoice(1)}>
-            <FontAwesomeIcon icon={faHandPaper} />
+            <FontAwesomeIcon className='icon-container' icon={faHandPaper} />
             <div>
-            { guesses.length > 0 ? 
-              <div>
-                {guesses[1].length}
+            { guesses[1] ? 
+              <div className='num-guesses'>
+                ({guesses[1].length})
               </div> : <div></div> }
             </div>
           </div>
           <div onClick={() => setMaybeChoice(2)}>
-              <FontAwesomeIcon icon={faHandScissors}/>
-            <div>
-            { guesses.length > 0 ? 
-              <div>
-                {guesses[2].length}
-              </div> : <div></div> }
+              <FontAwesomeIcon className='icon-container' icon={faHandScissors}/>
+              <div className='num-guesses'>
+                { guesses[2] ? 
+                  <div>
+                    ({guesses[2].length})
+                  </div> : <div></div> }
             </div>
           </div>
         </div>
         <div>
         { currentBlockNumber > nextBlockNumber ? 
           <div>
-            <button onClick={handleComplete}>Complete</button>
+            <button onClick={handleComplete} className='button'>Next Game</button>{' '}
           </div> : 
           <div>
             { choice != undefined ?
               <div>
-              <div>
-                <span>You chose { choice }</span>
+              <div className='selection'>
+                <span>{ mapIndexToItem(choice) }</span>
               </div>
             </div> : <div>
 
               { maybeChoice != undefined ? 
                   <div>
-                    <div>
-                      <span>You chose { maybeChoice }</span>
+                    <div className='selection'>
+                      <span>{ mapIndexToItem(maybeChoice) }</span>
                     </div>
-                    <button onClick={handlePlay}>Submit</button>
+                    {/* <button onClick={handlePlay}>Submit</button> */}
+                    <button onClick={handlePlay} className='button'>Play</button>{' '}
                   </div> : 
                   <div></div>
                 }
               </div> }
            </div> }
-           <div className='rewards-container'>
-            <span>
-              Current account: { signer ? signer.address : '' }
-            </span>
-            <button onClick={handlePayout}>withdraw { availableRewardBalance }</button>
-          </div>
         </div>
+      </div>
+      </div>
+      }
+      <div className='footer'>
+        <p>
+          <a target='_blank' href='https://etf.idealabs.network/'>docs</a>
+          |
+          <a target='_blank' href='https://etf.idealabs.network/docs/examples/getting_started'>faucet</a>
+          |
+          <a target='_blank' href='https://github.com/ideal-lab5/'>github</a>
+          |
+          <a target='_blank' href='https://discord.gg/4fMDbyRw7R'>discord</a>
+        </p>
+        <p>
+        Ideal Labs, 2024 &#169;
+        </p>
       </div>
     </div>
   );

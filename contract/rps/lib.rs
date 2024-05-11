@@ -2,7 +2,7 @@
 
 #[ink::contract]
 mod rps {
-    use gateway::GatewayRef;
+    use beacon::GatewayRef;
     use ink::storage::Mapping;
     use ink::prelude::vec::Vec;
     
@@ -20,9 +20,9 @@ mod rps {
         RoundInProgress,
     }
 
-    pub const MIN_TOKEN: Balance = 1;
-
     pub type RoundNumber = u32;
+    pub type Point = u32;
+    pub const MAX_STENGTH: Point = 100;
 
     #[ink(storage)]
     pub struct Rps {
@@ -30,8 +30,8 @@ mod rps {
         guesses: Mapping<u8, Vec<AccountId>>,
         /// track the winners
         winners: Mapping<RoundNumber, Vec<AccountId>>,
-        reward_tracker: Mapping<AccountId, Balance>,
-        round_reward: Mapping<RoundNumber, Balance>,
+        reward_tracker: Mapping<AccountId, Point>,
+        round_reward: Mapping<RoundNumber, Point>,
         round_result: Mapping<RoundNumber, u8>,
         /// the highest block number for which the clock can be advanced
         next_block_number: BlockNumber,
@@ -86,7 +86,7 @@ mod rps {
         }
 
         #[ink(message)]
-        pub fn get_pending_reward_balance(&self) -> Option<Balance> {
+        pub fn get_points(&self) -> Option<Point> {
             self.reward_tracker.get(self.env().caller())
         }
 
@@ -105,14 +105,14 @@ mod rps {
                 return Err(Error::OutOfRange);
             }
             // check transferred amount
-            let weight = self.env().transferred_value();
-            if weight != MIN_TOKEN {
-                return Err(Error::DepositTooLow);
-            }
+            // let weight = self.env().transferred_value();
+            // if weight != MIN_TOKEN {
+            //     return Err(Error::DepositTooLow);
+            // }
 
             // update current round reward pool
             let balance = self.round_reward.get(self.current_round_number).unwrap_or_default();
-            self.round_reward.insert(self.current_round_number, &balance.saturating_add(MIN_TOKEN));
+            self.round_reward.insert(self.current_round_number, &balance.saturating_add(MAX_STENGTH));
 
             let caller = self.env().caller();
             
@@ -139,20 +139,23 @@ mod rps {
             // I'm already running into this with problem
             if let Some(rand_bytes) = gateway_contract.read_block(self.next_block_number) {
                 let result: u8 = rand_bytes.iter().sum::<u8>() % 3;
+                // result = 0 => [winners = 1] 
+                // result = 1 => [winners = 2]
+                // result = 2 => [winner = 0]
+                // result = x => winner = [x + 1] % 3
                 self.round_result.insert(self.current_round_number, &result);
-                let winners = self.guesses.get(result).unwrap_or_default();
+
+                let winner_choice = (result + 1 ) % 3;
+                let winners = self.guesses.get(winner_choice).unwrap_or_default();
                 self.winners.insert(self.current_round_number, &winners);
                 // each winner gets their 1 token back
-                // plus an even split of the rest of the pool, reserving 5% for dev team
+                // plus an even split of the rest of the pool, reserving 5% for future dev
                 let amount = self.round_reward.get(self.current_round_number).unwrap_or_default();
-                
-                let reserve_amount = amount.saturating_mul(5).saturating_div(100);
-                let winner_length: u128 = winners.len().try_into().unwrap();
+                let winner_length: u32 = winners.len().try_into().unwrap();
                 if winner_length > 0 {
                     // this line would normally be called out by clippy, since it thinks winner_length can be 0
                     // however, we explicitly check for this condition and so we ignore the error
-                    let split_amount = amount.saturating_sub(reserve_amount).saturating_div(winner_length);
-                    // let split_amount = amount.saturating_div(winner_length);
+                    let split_amount = amount.saturating_div(winner_length);
 
                     winners.iter().for_each(|w| {
                         let balance = self.reward_tracker.get(w).unwrap_or_default();
@@ -161,7 +164,13 @@ mod rps {
                     });
                 }
 
+                // // each winner gets a 'reward' NFT
+                // winners.iter().for_each(|w| {
+                //     self.reward_tracker.insert(w, &new_balance);
+                // });
+
                 self.current_round_number = self.current_round_number.saturating_add(1);
+                // arbitrarily scheduled a future round (15) blocks from now
                 let mut next = block_number.saturating_add(15);
                 // round to nearest multiple of 5
                 next = (next.saturating_add(4).saturating_div(5)).saturating_mul(5);
@@ -171,16 +180,14 @@ mod rps {
                 self.guesses.remove(1);
                 self.guesses.remove(2);
             }
-
-            // make cross-contract call to get the sig from the round
-            // convert the hex to a number, take it mod 3 to determine the result
         }
 
-        #[ink(message)]
-        pub fn payout(&self) {
-            let caller = self.env().caller();
-            if let Some(balance) = self.reward_tracker.take(caller) {
-                self.env().transfer(caller, balance);
+        fn get_type_from_index(idx: u8) -> Vec<u8> {
+            match idx {
+                0 => b"rock".to_vec(),
+                1 => b"paper".to_vec(),
+                2 => b"scissors".to_vec(),
+                _ => b"".to_vec(),
             }
         }
     }

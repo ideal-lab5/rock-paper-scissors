@@ -3,6 +3,7 @@ import { web3Enable, web3Accounts, web3FromAddress } from "@polkadot/extension-d
 import { useContext, useEffect, useState } from 'react';
 // import { EtfContext } from "../../EtfContext";
 import Modal from "./modal";
+import './App.css';
 
 // import './connect.component.css';
 

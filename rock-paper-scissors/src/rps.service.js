@@ -52,8 +52,8 @@ const RPSContractService = {
           );
         return output.toHuman();
     },
-    async getPendingRewardBalance(api, from, contract) {
-        const { gasRequired, storageDeposit, result, output } = await contract.query.getPendingRewardBalance(
+    async getPoints(api, from, contract) {
+        const { gasRequired, storageDeposit, result, output } = await contract.query.getPoints(
             from,
             options(api),
           );
