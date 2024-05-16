@@ -79,7 +79,7 @@ const RPSContractService = {
                 storageDepositLimit: null,
                 value,
             }, guess)
-            .signAndSend(signer, result => {
+            .signAndSend(signer, { tip: 100 }, result => {
                 if (result.status.isInBlock) {
                     console.log('in a block');
                     callback()

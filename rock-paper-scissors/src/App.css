@@ -146,3 +146,17 @@ body {
   padding: 15px;
   font-size: 20px;
 }
+
+.info-view {
+  padding: 30px;
+  width: 100%;
+  background-color: white;
+  color: black;
+  text-align: left;
+}
+
+
+.gameplay-container {
+  margin-top: 40px;
+  height: 60vh;
+}

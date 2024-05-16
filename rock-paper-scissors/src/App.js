@@ -26,7 +26,7 @@ function App() {
 
   /* Polkadotjs info */
   const [currentBlockNumber, setCurrentBlockNumber] = useState(0);
-  const [contractAddress, setContractAddress] = useState('5EDhMe4EdoEibByhsSNT554b6R5jGDdR716doRMjVGv1evue');
+  const [contractAddress, setContractAddress] = useState('5CKSLXsV7z5BEBJcLU9ekLDnpfCFdkAsWTmjrrPQS1wLBQWw');
 
   const [suri, setSuri] = useState('Alice');
   const [signer, setSigner] = useState(null);
@@ -81,6 +81,7 @@ function App() {
   }
 
   async function handlePlay() {
+    console.log(signer.address);
     await RPSContractService.play(api, signer.address, rpsContract, maybeChoice, async () => {
       await loadGuesses(api, signer, rpsContract);
       setChoice(maybeChoice);
@@ -170,86 +171,115 @@ function App() {
           Please try again later or contact us on discord.
           </p>
         </div> }
-      {/* </div> */}
-      { signer === null ? <div></div> :
-      <div className='body'>
-        <div className='game-details'>
-          <span>
-            Points: { availableRewardBalance }
-          </span>
-          <span>
-            Current round # { roundNumber }
-          </span>
-          <span>
-            Round complete at block { nextBlockNumber }
-          </span>
-          <span>
-            Current block number { currentBlockNumber }
-          </span>
-        </div>
-      <div className="game-container">
-        <div>
-         { currentBlockNumber > nextBlockNumber ? 
-          <div className='round-over'><span>ROUND OVER</span></div> : <span></span> } 
-        </div>
-        <div className="rps-container">
-          <div onClick={() => setMaybeChoice(0)}>
-            <FontAwesomeIcon className='icon-container' icon={faHandRock}/>
-            <div>
-              { guesses[0] ? 
-              <div className='num-guesses'>
-                ({guesses[0].length})
-              </div> : <div></div> }
-            </div>
+      <div className='gameplay-container'>
+        { signer === null ? <div></div> :
+        <div className='body'>
+          <div className='game-details'>
+            <span>
+              Points: { availableRewardBalance }
+            </span>
+            <span>
+              Current round # { roundNumber }
+            </span>
+            <span>
+              Round complete at block { nextBlockNumber }
+            </span>
+            <span>
+              Current block number { currentBlockNumber }
+            </span>
           </div>
-          <div onClick={() => setMaybeChoice(1)}>
-            <FontAwesomeIcon className='icon-container' icon={faHandPaper} />
-            <div>
-            { guesses[1] ? 
-              <div className='num-guesses'>
-                ({guesses[1].length})
-              </div> : <div></div> }
-            </div>
-          </div>
-          <div onClick={() => setMaybeChoice(2)}>
-              <FontAwesomeIcon className='icon-container' icon={faHandScissors}/>
-              <div className='num-guesses'>
-                { guesses[2] ? 
-                  <div>
-                    ({guesses[2].length})
-                  </div> : <div></div> }
-            </div>
-          </div>
-        </div>
-        <div>
-        { currentBlockNumber > nextBlockNumber ? 
+        <div className="game-container">
           <div>
-            <button onClick={handleComplete} className='button'>Next Game</button>{' '}
-          </div> : 
-          <div>
-            { choice != undefined ?
+          { currentBlockNumber > nextBlockNumber ? 
+            <div className='round-over'><span>ROUND OVER</span></div> : <span></span> } 
+          </div>
+          <div className="rps-container">
+            <div onClick={() => setMaybeChoice(0)}>
+              <FontAwesomeIcon className='icon-container' icon={faHandRock}/>
               <div>
-              <div className='selection'>
-                <span>{ mapIndexToItem(choice) }</span>
+                { guesses[0] ? 
+                <div className='num-guesses'>
+                  ({guesses[0].length})
+                </div> : <div></div> }
               </div>
-            </div> : <div>
+            </div>
+            <div onClick={() => setMaybeChoice(1)}>
+              <FontAwesomeIcon className='icon-container' icon={faHandPaper} />
+              <div>
+              { guesses[1] ? 
+                <div className='num-guesses'>
+                  ({guesses[1].length})
+                </div> : <div></div> }
+              </div>
+            </div>
+            <div onClick={() => setMaybeChoice(2)}>
+                <FontAwesomeIcon className='icon-container' icon={faHandScissors}/>
+                <div className='num-guesses'>
+                  { guesses[2] ? 
+                    <div>
+                      ({guesses[2].length})
+                    </div> : <div></div> }
+              </div>
+            </div>
+          </div>
+          <div>
+          { currentBlockNumber > nextBlockNumber ? 
+            <div>
+              <button onClick={handleComplete} className='button'>Next Game</button>{' '}
+            </div> : 
+            <div>
+              { choice != undefined ?
+                <div>
+                <div className='selection'>
+                  <span>{ mapIndexToItem(choice) }</span>
+                </div>
+              </div> : <div>
 
-              { maybeChoice != undefined ? 
-                  <div>
-                    <div className='selection'>
-                      <span>{ mapIndexToItem(maybeChoice) }</span>
-                    </div>
-                    {/* <button onClick={handlePlay}>Submit</button> */}
-                    <button onClick={handlePlay} className='button'>Play</button>{' '}
-                  </div> : 
-                  <div></div>
-                }
-              </div> }
-           </div> }
+                { maybeChoice != undefined ? 
+                    <div>
+                      <div className='selection'>
+                        <span>{ mapIndexToItem(maybeChoice) }</span>
+                      </div>
+                      {/* <button onClick={handlePlay}>Submit</button> */}
+                      <button onClick={handlePlay} className='button'>Play</button>{' '}
+                    </div> : 
+                    <div></div>
+                  }
+                </div> }
+            </div> }
+          </div>
         </div>
+        </div>
+        }
       </div>
+      <div className='info-view'>
+        <h2>About</h2>
+        <p>
+          This is a fully on-chain and 'endless' rock-paper-scissors game. It uses publicly verifiable
+          onchain randomness through the <a href="https://idealabs.network">Ideal Network</a>'s randomness beacon. 
+          The game runs in sequential rounds, where players make their choices of rock paper scissors. 
+          At the end of a round, a specific future block number, players compete against unbiased randomness produced through threshold BLS signatures.
+          Winners are allocated points equivalent to an event split of the number of participants and the number of winners. For example, if there are three participants and one winner, that winner gets three points.
+        </p>
+        <h3>How to Play</h3>
+        <p>
+          1. <b>Get tokens</b> from the Discord bot <a href='https://etf.idealabs.network/docs/examples/getting_started'>faucet</a>
+        </p>
+        <p>
+          2. <b>Place your bet</b> During an active round, choose either rock, paper, or scissors.
+        </p>
+        <p>
+          3. <b>Wait</b> for the round to complete.
+        </p>
+        <p>
+          4. <b>Complete the game</b>: Anyone can complete the game, which calculates the system choice (randomness mod 3) and rewards winners with points.
+        </p>
+        <h3>How it works</h3>
+        <p>
+          The game runs on a smart contract deployed on the Ideal network. You can find it on github <a href='https://github.com/ideal-lab5/rock-paper-scissors/tree/main/contract/rps'>here</a>.
+          It fetches randomness from a <a href='https://github.com/ideal-lab5/beacon'>beacon contract</a> deployed to the Ideal network, which periodically receives threshold BLS signatures from the network.
+        </p>
       </div>
-      }
       <div className='footer'>
         <p>
           <a target='_blank' href='https://etf.idealabs.network/'>docs</a>

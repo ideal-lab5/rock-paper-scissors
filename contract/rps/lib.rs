@@ -18,6 +18,7 @@ mod rps {
         DepositTooLow,
         /// the current round is in progress and cannot be ended
         RoundInProgress,
+        InvalidRandomness,
     }
 
     pub type RoundNumber = u32;
@@ -30,11 +31,17 @@ mod rps {
         guesses: Mapping<u8, Vec<AccountId>>,
         /// track the winners
         winners: Mapping<RoundNumber, Vec<AccountId>>,
+        /// a mapping between account ids and total number of earned points
         reward_tracker: Mapping<AccountId, Point>,
+        /// tracks the total available reward pool for a given round (essentially = to num participants)
         round_reward: Mapping<RoundNumber, Point>,
+        /// the results of each round (output of system randomness)
         round_result: Mapping<RoundNumber, u8>,
+        /// the current block number for which we have received randomness
+        current_block_number: BlockNumber,
         /// the highest block number for which the clock can be advanced
         next_block_number: BlockNumber,
+        /// the current round number of the game (starting at 0)
         current_round_number: RoundNumber,
         /// the smart contract light client AccountId
         gateway: AccountId,
@@ -125,14 +132,15 @@ mod rps {
 
         #[ink(message)]
         #[allow(clippy::arithmetic_side_effects)]
-        pub fn complete(&mut self) {
+        pub fn complete(&mut self) -> Result<(), Error> {
             let block_number = self.env().block_number();
-            // assert!(block_number > next_block_number, Error::RoundInProgress);
+            // if block_number > self.next_block_number {
+            //     return Err(Error::RoundInProgress);
+            // }
 
             // fetch the randomness for the 'next_block_number'
             let gateway_contract: GatewayRef =
                 ink::env::call::FromAccountId::from_account_id(self.gateway);
-
             // we can only finish the round if there is randomness for it
             // need to be careful later.. if the gateway misses an expected next_block_number
             // then we could run into trouble, so we need a fallback mechanism....
@@ -179,7 +187,11 @@ mod rps {
                 self.guesses.remove(0);
                 self.guesses.remove(1);
                 self.guesses.remove(2);
+
+                return Ok(());
             }
+
+            return Err(Error::InvalidRandomness)
         }
 
         fn get_type_from_index(idx: u8) -> Vec<u8> {
