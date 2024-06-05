@@ -26,7 +26,7 @@ function App() {
 
   /* Polkadotjs info */
   const [currentBlockNumber, setCurrentBlockNumber] = useState(0);
-  const [contractAddress, setContractAddress] = useState('5CKSLXsV7z5BEBJcLU9ekLDnpfCFdkAsWTmjrrPQS1wLBQWw');
+  const [contractAddress, setContractAddress] = useState('5FtYzMzHY5yvmnC3ThHUKHdQXCJzWLVNyg4t7PYGyYb7XJKf');
 
   const [suri, setSuri] = useState('Alice');
   const [signer, setSigner] = useState(null);
@@ -36,8 +36,8 @@ function App() {
 
   useEffect(() => {
     const setupPolkadot = async () => {
-      // let provider = new WsProvider('ws://localhost:9944');
-      let provider = new WsProvider('wss://etf1.idealabs.network:443');
+      let provider = new WsProvider('ws://localhost:9944');
+      // let provider = new WsProvider('wss://etf1.idealabs.network:443');
       let api = await ApiPromise.create({ provider });
       setApi(api);
 
