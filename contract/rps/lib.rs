@@ -1,8 +1,10 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
-#[ink::contract]
+use idl_contract_extension::ext::DrandEnvironment;
+
+#[ink::contract(env = DrandEnvironment)]
 mod rps {
-    use beacon::GatewayRef;
+    use crate::DrandEnvironment;
     use ink::storage::Mapping;
     use ink::prelude::vec::Vec;
     
@@ -18,7 +20,6 @@ mod rps {
         DepositTooLow,
         /// the current round is in progress and cannot be ended
         RoundInProgress,
-        InvalidRandomness,
     }
 
     pub type RoundNumber = u32;
@@ -43,15 +44,12 @@ mod rps {
         next_block_number: BlockNumber,
         /// the current round number of the game (starting at 0)
         current_round_number: RoundNumber,
-        /// the smart contract light client AccountId
-        gateway: AccountId,
     }
 
     impl Rps {
         
         #[ink(constructor)]
         pub fn new(
-            gateway: AccountId,
             start_block_number: BlockNumber,
         ) -> Self {
             Self {
@@ -61,15 +59,15 @@ mod rps {
                 round_reward: Mapping::new(),
                 round_result: Mapping::new(),
                 current_round_number: 0,
+                current_block_number: 0,
                 next_block_number: start_block_number,
-                gateway,
             }
         }
 
         /// by default games are not playable... :/
         #[ink(constructor)]
         pub fn default() -> Self {
-            Self::new([0;32].into(), 0)
+            Self::new(0)
         }
 
         #[ink(message)]
@@ -117,9 +115,14 @@ mod rps {
             //     return Err(Error::DepositTooLow);
             // }
 
+            // get updated balance
+            let balance = self.round_reward
+                .get(self.current_round_number)
+                .unwrap_or_default();
+
             // update current round reward pool
-            let balance = self.round_reward.get(self.current_round_number).unwrap_or_default();
-            self.round_reward.insert(self.current_round_number, &balance.saturating_add(MAX_STENGTH));
+            self.round_reward
+                .insert(self.current_round_number, &balance.saturating_add(MAX_STENGTH));
 
             let caller = self.env().caller();
             
@@ -137,61 +140,85 @@ mod rps {
             // if block_number > self.next_block_number {
             //     return Err(Error::RoundInProgress);
             // }
-
-            // fetch the randomness for the 'next_block_number'
-            let gateway_contract: GatewayRef =
-                ink::env::call::FromAccountId::from_account_id(self.gateway);
             // we can only finish the round if there is randomness for it
-            // need to be careful later.. if the gateway misses an expected next_block_number
-            // then we could run into trouble, so we need a fallback mechanism....
-            // I'm already running into this with problem
-            if let Some(rand_bytes) = gateway_contract.read_block(self.next_block_number) {
-                let result: u8 = rand_bytes.iter().sum::<u8>() % 3;
-                // result = 0 => [winners = 1] 
-                // result = 1 => [winners = 2]
-                // result = 2 => [winner = 0]
-                // result = x => winner = [x + 1] % 3
-                self.round_result.insert(self.current_round_number, &result);
+            // need to be careful later.. if the OCW misses an expected next_block_number
+            // then we could run into trouble, so we need a fallback mechanism...
+            let rand = self.env()
+                .extension()
+                .random();
+            let result: u8 = rand.iter().sum::<u8>() % 3;
+            // result = 0 => [winners = 1] 
+            // result = 1 => [winners = 2]
+            // result = 2 => [winner = 0]
+            // result = x => winner = [x + 1] % 3
+            self.round_result.insert(self.current_round_number, &result);
 
-                let winner_choice = (result + 1 ) % 3;
-                let winners = self.guesses.get(winner_choice).unwrap_or_default();
-                self.winners.insert(self.current_round_number, &winners);
-                // each winner gets their 1 token back
-                // plus an even split of the rest of the pool, reserving 5% for future dev
-                let amount = self.round_reward.get(self.current_round_number).unwrap_or_default();
-                let winner_length: u32 = winners.len().try_into().unwrap();
-                if winner_length > 0 {
-                    // this line would normally be called out by clippy, since it thinks winner_length can be 0
-                    // however, we explicitly check for this condition and so we ignore the error
-                    let split_amount = amount.saturating_div(winner_length);
+            let winner_choice = (result + 1 ) % 3;
+            let winners = self.guesses.get(winner_choice).unwrap_or_default();
+            self.winners.insert(self.current_round_number, &winners);
+            // each winner gets their 1 token back
+            // plus an even split of the rest of the pool, reserving 5% for future dev
+            let amount = self.round_reward.get(self.current_round_number).unwrap_or_default();
+            let winner_length: u32 = winners.len().try_into().unwrap();
+            if winner_length > 0 {
+                // this line would normally be called out by clippy, since it thinks winner_length can be 0
+                // however, we explicitly check for this condition and so we ignore the error
+                let split_amount = amount.saturating_div(winner_length);
 
-                    winners.iter().for_each(|w| {
-                        let balance = self.reward_tracker.get(w).unwrap_or_default();
-                        let new_balance = balance.saturating_add(split_amount);
-                        self.reward_tracker.insert(w, &new_balance);
-                    });
-                }
+                winners.iter().for_each(|w| {
+                    let balance = self.reward_tracker.get(w).unwrap_or_default();
+                    let new_balance = balance.saturating_add(split_amount);
+                    self.reward_tracker.insert(w, &new_balance);
+                });
+            }
+
+            // if let Some(rand_bytes) = gateway_contract.read_block(self.next_block_number) {
+            //     let result: u8 = rand_bytes.iter().sum::<u8>() % 3;
+            //     // result = 0 => [winners = 1] 
+            //     // result = 1 => [winners = 2]
+            //     // result = 2 => [winner = 0]
+            //     // result = x => winner = [x + 1] % 3
+            //     self.round_result.insert(self.current_round_number, &result);
+
+            //     let winner_choice = (result + 1 ) % 3;
+            //     let winners = self.guesses.get(winner_choice).unwrap_or_default();
+            //     self.winners.insert(self.current_round_number, &winners);
+            //     // each winner gets their 1 token back
+            //     // plus an even split of the rest of the pool, reserving 5% for future dev
+            //     let amount = self.round_reward.get(self.current_round_number).unwrap_or_default();
+            //     let winner_length: u32 = winners.len().try_into().unwrap();
+            //     if winner_length > 0 {
+            //         // this line would normally be called out by clippy, since it thinks winner_length can be 0
+            //         // however, we explicitly check for this condition and so we ignore the error
+            //         let split_amount = amount.saturating_div(winner_length);
+
+            //         winners.iter().for_each(|w| {
+            //             let balance = self.reward_tracker.get(w).unwrap_or_default();
+            //             let new_balance = balance.saturating_add(split_amount);
+            //             self.reward_tracker.insert(w, &new_balance);
+            //         });
+            //     }
 
                 // // each winner gets a 'reward' NFT
                 // winners.iter().for_each(|w| {
                 //     self.reward_tracker.insert(w, &new_balance);
                 // });
 
-                self.current_round_number = self.current_round_number.saturating_add(1);
-                // arbitrarily scheduled a future round (15) blocks from now
-                let mut next = block_number.saturating_add(15);
-                // round to nearest multiple of 5
-                next = (next.saturating_add(4).saturating_div(5)).saturating_mul(5);
-                self.next_block_number = next;
+            self.current_round_number = self.current_round_number.saturating_add(1);
+            // arbitrarily scheduled a future round (15) blocks from now
+            let mut next = block_number.saturating_add(15);
+            // round to nearest multiple of 5
+            next = (next.saturating_add(4).saturating_div(5)).saturating_mul(5);
+            self.next_block_number = next;
 
-                self.guesses.remove(0);
-                self.guesses.remove(1);
-                self.guesses.remove(2);
+            self.guesses.remove(0);
+            self.guesses.remove(1);
+            self.guesses.remove(2);
 
-                return Ok(());
-            }
+            return Ok(());
+            // }
 
-            return Err(Error::InvalidRandomness)
+            // return Err(Error::InvalidRandomness)
         }
 
         fn get_type_from_index(idx: u8) -> Vec<u8> {

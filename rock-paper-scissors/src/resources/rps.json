@@ -1,8 +1,8 @@
 {
   "source": {
-    "hash": "0xe4584cf285e778dcf5b6d80910648ddd2383a9e5811ae7fadd66906e38880cb1",
+    "hash": "0x443436882ba12b858507e8a56d8b7172e2e6863e60647d1ba1eedba45f85a1ab",
     "language": "ink! 5.0.0",
-    "compiler": "rustc 1.77.2",
+    "compiler": "rustc 1.79.0",
     "build_info": {
       "build_mode": "Debug",
       "cargo_contract_version": "4.1.1",
@@ -25,15 +25,6 @@
     "constructors": [
       {
         "args": [
-          {
-            "label": "gateway",
-            "type": {
-              "displayName": [
-                "AccountId"
-              ],
-              "type": 1
-            }
-          },
           {
             "label": "start_block_number",
             "type": {
@@ -291,7 +282,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 23
+          "type": 32
         },
         "selector": "0x0740d2e1"
       }
@@ -384,6 +375,15 @@
                   "ty": 10
                 }
               },
+              "name": "current_block_number"
+            },
+            {
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 10
+                }
+              },
               "name": "next_block_number"
             },
             {
@@ -394,15 +394,6 @@
                 }
               },
               "name": "current_round_number"
-            },
-            {
-              "layout": {
-                "leaf": {
-                  "key": "0x00000000",
-                  "ty": 1
-                }
-              },
-              "name": "gateway"
             }
           ],
           "name": "Rps"
@@ -873,6 +864,11 @@
                 "typeName": "<Mapping<RoundNumber, u8> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<609840817u32, ()\n>,>>::Type"
               },
               {
+                "name": "current_block_number",
+                "type": 10,
+                "typeName": "<BlockNumber as::ink::storage::traits::AutoStorableHint<::ink::\nstorage::traits::ManualKey<376500861u32, ()>,>>::Type"
+              },
+              {
                 "name": "next_block_number",
                 "type": 10,
                 "typeName": "<BlockNumber as::ink::storage::traits::AutoStorableHint<::ink::\nstorage::traits::ManualKey<2429842528u32, ()>,>>::Type"
@@ -881,11 +877,6 @@
                 "name": "current_round_number",
                 "type": 10,
                 "typeName": "<RoundNumber as::ink::storage::traits::AutoStorableHint<::ink::\nstorage::traits::ManualKey<1920766529u32, ()>,>>::Type"
-              },
-              {
-                "name": "gateway",
-                "type": 1,
-                "typeName": "<AccountId as::ink::storage::traits::AutoStorableHint<::ink::\nstorage::traits::ManualKey<3770536771u32, ()>,>>::Type"
               }
             ]
           }
@@ -1380,9 +1371,9 @@
           "variant": {}
         },
         "path": [
-          "ink_env",
-          "types",
-          "NoChainExtension"
+          "idl_contract_extension",
+          "ext",
+          "Drand"
         ]
       }
     }

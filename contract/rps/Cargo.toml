@@ -8,8 +8,7 @@ edition = "2021"
 ink = { version = "5.0.0", default-features = false }
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
 scale-info = { version = "2.6", default-features = false, features = ["derive"], optional = true }
-beacon = { path = "../../../simple_relay/beacon", default-features = false, features = ["ink-as-dependency"] } 
-etf-crypto-primitives = { git = "https://github.com/ideal-lab5/etf-sdk/", branch="w3fbls-migration", default-features = false}
+idl-contract-extension = { git = "https://github.com/ideal-lab5/contracts.git", branch = "tony/dev", default-features = false, features = ["ink-as-dependency"] }
 
 [dev-dependencies]
 ink_e2e = { version = "5.0.0" }
@@ -23,8 +22,7 @@ std = [
     "ink/std",
     "scale/std",
     "scale-info/std",
-    "beacon/std",
-    "etf-crypto-primitives/std"
+    "idl-contract-extension/std",
 ]
 ink-as-dependency = []
 e2e-tests = []

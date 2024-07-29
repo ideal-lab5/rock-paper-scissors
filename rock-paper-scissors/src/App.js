@@ -26,7 +26,7 @@ function App() {
 
   /* Polkadotjs info */
   const [currentBlockNumber, setCurrentBlockNumber] = useState(0);
-  const [contractAddress, setContractAddress] = useState('5FtYzMzHY5yvmnC3ThHUKHdQXCJzWLVNyg4t7PYGyYb7XJKf');
+  const [contractAddress, setContractAddress] = useState('5C5xLevujsLHgNeopG9kFLtsaaJ53egEDqDr8vkx2GRb8Ekh');
 
   const [suri, setSuri] = useState('Alice');
   const [signer, setSigner] = useState(null);
@@ -263,7 +263,7 @@ function App() {
         </p>
         <h3>How to Play</h3>
         <p>
-          1. <b>Get tokens</b> from the Discord bot <a href='https://etf.idealabs.network/docs/examples/getting_started'>faucet</a>
+          1. <b>Get tokens</b> from the Discord bot <a href='https://docs.idealabs.network/docs/examples/getting_started'>faucet</a>
         </p>
         <p>
           2. <b>Place your bet</b> During an active round, choose either rock, paper, or scissors.
@@ -282,9 +282,9 @@ function App() {
       </div>
       <div className='footer'>
         <p>
-          <a target='_blank' href='https://etf.idealabs.network/'>docs</a>
+          <a target='_blank' href='https://docs.idealabs.network/'>docs</a>
           |
-          <a target='_blank' href='https://etf.idealabs.network/docs/examples/getting_started'>faucet</a>
+          <a target='_blank' href='https://docs.idealabs.network/docs/examples/getting_started'>faucet</a>
           |
           <a target='_blank' href='https://github.com/ideal-lab5/'>github</a>
           |

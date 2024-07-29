@@ -79,7 +79,7 @@ const RPSContractService = {
                 storageDepositLimit: null,
                 value,
             }, guess)
-            .signAndSend(signer, { tip: 100 }, result => {
+            .signAndSend(signer, { tip: 1 }, result => {
                 if (result.status.isInBlock) {
                     console.log('in a block');
                     callback()
@@ -91,7 +91,7 @@ const RPSContractService = {
     async complete(api, signer, contract, callback) {
         await contract.tx
             .complete(options(api))
-            .signAndSend(signer, result => {
+            .signAndSend(signer, { tip: 1 }, result => {
                 if (result.status.isInBlock) {
                     console.log('in a block');
                     callback()
@@ -103,7 +103,7 @@ const RPSContractService = {
     async payout(api, signer, contract, callback) {
         await contract.tx
             .payout(options(api))
-            .signAndSend(signer, result => {
+            .signAndSend(signer, { tip: 1 }, result => {
                 if (result.status.isInBlock) {
                     console.log('in a block');
                     callback()

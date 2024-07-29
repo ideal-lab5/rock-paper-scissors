@@ -1,7 +1,18 @@
 # Rock Paper Scissors
 
-This is an demo rock-paper-scissors game that uses randomness from the ETF network.
+This is a demo rock-paper-scissors web3 game that uses randomness from drand.
 
-It fetches random hex values (signatures) from a "gateway" contract and uses them to allow many players to compete in a game of rock-paper-scissors.
+## Prerequisites
+Install [cargo contract](https://github.com/use-ink/cargo-contract).
 
- 
+ ## Build
+
+``` shell
+cargo contract build
+```
+
+ ## Test
+
+ ``` shell
+cargo contract test
+ ```
