@@ -256,7 +256,7 @@ function App() {
         <h2>About</h2>
         <p>
           This is a fully on-chain and 'endless' rock-paper-scissors game. It uses publicly verifiable
-          onchain randomness through the <a href="https://idealabs.network">Ideal Network</a>'s randomness beacon. 
+          onchain randomness through the <a href="https://idealabs.network">Ideal Network</a>'s drand bridge. 
           The game runs in sequential rounds, where players make their choices of rock paper scissors. 
           At the end of a round, a specific future block number, players compete against unbiased randomness produced through threshold BLS signatures.
           Winners are allocated points equivalent to an event split of the number of participants and the number of winners. For example, if there are three participants and one winner, that winner gets three points.
@@ -277,7 +277,7 @@ function App() {
         <h3>How it works</h3>
         <p>
           The game runs on a smart contract deployed on the Ideal network. You can find it on github <a href='https://github.com/ideal-lab5/rock-paper-scissors/tree/main/contract/rps'>here</a>.
-          It fetches randomness from a <a href='https://github.com/ideal-lab5/beacon'>beacon contract</a> deployed to the Ideal network, which periodically receives threshold BLS signatures from the network.
+          It uses a drand <> Substrate bridge to inject publicly verifiable randomness into the runtime.
         </p>
       </div>
       <div className='footer'>
