@@ -277,7 +277,7 @@ function App() {
         <h3>How it works</h3>
         <p>
           The game runs on a smart contract deployed on the Ideal network. You can find it on github <a href='https://github.com/ideal-lab5/rock-paper-scissors/tree/main/contract/rps'>here</a>.
-          It uses a drand <> Substrate bridge to inject publicly verifiable randomness into the runtime.
+          It uses a drand to Substrate bridge to inject publicly verifiable randomness into the runtime.
         </p>
       </div>
       <div className='footer'>
