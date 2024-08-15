@@ -137,12 +137,9 @@ mod rps {
         #[allow(clippy::arithmetic_side_effects)]
         pub fn complete(&mut self) -> Result<(), Error> {
             let block_number = self.env().block_number();
-            // if block_number > self.next_block_number {
-            //     return Err(Error::RoundInProgress);
-            // }
-            // we can only finish the round if there is randomness for it
-            // need to be careful later.. if the OCW misses an expected next_block_number
-            // then we could run into trouble, so we need a fallback mechanism...
+            if block_number < self.next_block_number {
+                return Err(Error::RoundInProgress);
+            }
             let rand = self.env()
                 .extension()
                 .random();
@@ -172,38 +169,6 @@ mod rps {
                 });
             }
 
-            // if let Some(rand_bytes) = gateway_contract.read_block(self.next_block_number) {
-            //     let result: u8 = rand_bytes.iter().sum::<u8>() % 3;
-            //     // result = 0 => [winners = 1] 
-            //     // result = 1 => [winners = 2]
-            //     // result = 2 => [winner = 0]
-            //     // result = x => winner = [x + 1] % 3
-            //     self.round_result.insert(self.current_round_number, &result);
-
-            //     let winner_choice = (result + 1 ) % 3;
-            //     let winners = self.guesses.get(winner_choice).unwrap_or_default();
-            //     self.winners.insert(self.current_round_number, &winners);
-            //     // each winner gets their 1 token back
-            //     // plus an even split of the rest of the pool, reserving 5% for future dev
-            //     let amount = self.round_reward.get(self.current_round_number).unwrap_or_default();
-            //     let winner_length: u32 = winners.len().try_into().unwrap();
-            //     if winner_length > 0 {
-            //         // this line would normally be called out by clippy, since it thinks winner_length can be 0
-            //         // however, we explicitly check for this condition and so we ignore the error
-            //         let split_amount = amount.saturating_div(winner_length);
-
-            //         winners.iter().for_each(|w| {
-            //             let balance = self.reward_tracker.get(w).unwrap_or_default();
-            //             let new_balance = balance.saturating_add(split_amount);
-            //             self.reward_tracker.insert(w, &new_balance);
-            //         });
-            //     }
-
-                // // each winner gets a 'reward' NFT
-                // winners.iter().for_each(|w| {
-                //     self.reward_tracker.insert(w, &new_balance);
-                // });
-
             self.current_round_number = self.current_round_number.saturating_add(1);
             // arbitrarily scheduled a future round (15) blocks from now
             let mut next = block_number.saturating_add(15);
@@ -216,9 +181,6 @@ mod rps {
             self.guesses.remove(2);
 
             return Ok(());
-            // }
-
-            // return Err(Error::InvalidRandomness)
         }
 
         fn get_type_from_index(idx: u8) -> Vec<u8> {

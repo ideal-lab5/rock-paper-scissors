@@ -5,8 +5,6 @@ import { useContext, useEffect, useState } from 'react';
 import Modal from "./modal";
 import './App.css';
 
-// import './connect.component.css';
-
 function WalletConnect(props) {
 
     const [isConnected, setIsConnected] = useState(false);
@@ -24,6 +22,7 @@ function WalletConnect(props) {
     async function connect() {
         await web3Enable('Ideal|RockPaperScissors');
         const allAccounts = await web3Accounts();
+        // props.callback();
         setAvailableAccounts(allAccounts);
     }
 
@@ -33,7 +32,7 @@ function WalletConnect(props) {
     }
 
     const checkBalance = async (address) => {
-        let bal  = await props.api.query.system.account(address);
+        let bal = await props.api.query.system.account(address);
         let bigBalance = BigInt(parseInt(bal.data.free))
         setBalance(Number(bigBalance) || 0);
     }
@@ -54,7 +53,7 @@ function WalletConnect(props) {
             {isConnected ?
                 <div className="wallet-amount">
                     <span className="copy" onClick={() => navigator.clipboard.writeText(signerAddress)}>
-                        Address: { signerAddress.slice(0, 4) + '...' + signerAddress.slice(signerAddress.length - 4) }
+                        Address: {signerAddress.slice(0, 4) + '...' + signerAddress.slice(signerAddress.length - 4)}
                     </span>
                     <span>Balance: {balance} Tokens</span>
                 </div> :
@@ -64,40 +63,40 @@ function WalletConnect(props) {
                         visible={showWalletSelection}
                         onClose={() => setShowWalletSelection(false)}
                     >
-                    {availableAccounts.length > 0 ?
-                        <table className="account-selection-table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Address</th>
-                                    <th scope="col"/>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {availableAccounts.map((account, index) => (
-                                    <tr key={index}>
-                                        <td>
-                                            {account.meta.name.substring(0, 8) + (account.meta.name.length > 8 ? ' ...' : '')}
-                                        </td>
-                                        <td className="address">
-                                            <span onClick={() => navigator.clipboard.writeText(account.address)} className='clickable'>
-                                                {account.address.substring(0, 8) + '...'}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <button className="open-button" onClick={handleSelectWallet(account.address)}>
-                                                Connect
-                                            </button>
-                                        </td>
+                        {availableAccounts.length > 0 ?
+                            <table className="account-selection-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Address</th>
+                                        <th scope="col" />
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table> :
-                        <div>
-                            <h3>You need a polkadotjs wallet and at least one account to play.</h3>
-                        </div>
-                    }</Modal>
-                    </div>
+                                </thead>
+                                <tbody>
+                                    {availableAccounts.map((account, index) => (
+                                        <tr key={index}>
+                                            <td>
+                                                {account.meta.name.substring(0, 8) + (account.meta.name.length > 8 ? ' ...' : '')}
+                                            </td>
+                                            <td className="address">
+                                                <span onClick={() => navigator.clipboard.writeText(account.address)} className='clickable'>
+                                                    {account.address.substring(0, 8) + '...'}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button className="open-button" onClick={handleSelectWallet(account.address)}>
+                                                    Connect
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table> :
+                            <div>
+                                <h3>You need a polkadotjs wallet and at least one account to play.</h3>
+                            </div>
+                        }</Modal>
+                </div>
             }</div>
     );
 }

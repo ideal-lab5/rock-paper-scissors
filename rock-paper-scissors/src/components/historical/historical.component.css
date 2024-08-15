@@ -1,0 +1,50 @@
+/* HistoricResults.css */
+
+.historic-results {
+  background-color: #f7f9fc;
+  border: 2px solid #d1d9e6;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: scroll;
+}
+
+.historic-results h3 {
+  font-size: 1.5em;
+  color: #34495e;
+  margin-bottom: 15px;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.results-table th,
+.results-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #d1d9e6;
+}
+
+.results-table th {
+  background-color: #ecf0f1;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.results-table td {
+  font-size: 1.1em;
+  color: #34495e;
+}
+
+.winner {
+  display: inline-block;
+  background-color: #3498db;
+  color: white;
+  border-radius: 5px;
+  padding: 3px 6px;
+  margin-right: 5px;
+  font-size: 0.9em;
+}
